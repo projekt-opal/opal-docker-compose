@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  ckan-db:
+    image: postgres:9.6.0
+    container_name: ckan-hobbit-db
+    environment:
+      - POSTGRES_PASSWORD=ckan
+      - POSTGRES_USER=ckan
+      - PGDATA=/var/lib/postgresql/data
+      - POSTGRES_DB=ckan
+    volumes:
+      - ./data/ckan-hobbit-db:/var/lib/postgresql/data
+    restart: always
+
+  ckan-solr:
+    image: earthquakesan/ckan-solr:2.8.0
+    container_name: ckan-hobbit-solr
+    restart: always
+
+  ckan-redis:
+    image: redis:4.0.11
+    restart: always
+  
+  #ckan-datapusher:
+  #  image: earthquakesan/ckan-datapusher:latest
+  #  restart: always
+
+  ckan:
+    image: earthquakesan/ckan:2.8.1
+    environment:
+      - CKAN_SQLALCHEMY_URL=postgresql://ckan:ckan@ckan-db:5432/ckan
+      - CKAN_SOLR_URL=http://ckan-solr:8983/solr/ckan
+      - CKAN_REDIS_URL=redis://ckan-redis:6379/0
+      - CKAN_DATAPUSHER_URL=http://ckan-datapusher:8800/
+      - CKAN_SITE_URL=http://localhost
+      - CKAN_RECAPTCHA_PUBLICKEY=${CKAN_RECAPTCHA_PUBLICKEY}
+      - CKAN_RECAPTCHA_PRIVATEKEY=${CKAN_RECAPTCHA_PRIVATEKEY}
+      #- DEBUG=true
+    volumes:
+      - ./ckan-uploads:/var/lib/ckan
+    restart: always
+    ports:
+      - 80:5000
