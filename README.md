@@ -14,3 +14,8 @@ CKAN_RECAPTCHA_PRIVATEKEY=6Le...Gli
 ```
 docker-compose up -d
 ```
+
+3. Create admin user
+```
+docker exec -it $(docker ps | grep ckan:2.8.1-opal | cut -d' ' -f 1) ckan-paster --plugin=ckan sysadmin add admin email=admin@example.com -c /etc/ckan/production.ini
+```

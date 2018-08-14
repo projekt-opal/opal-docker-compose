@@ -27,7 +27,7 @@ services:
   #  restart: always
 
   ckan:
-    image: earthquakesan/ckan:2.8.1
+    image: earthquakesan/ckan:2.8.1-opal
     environment:
       - CKAN_SQLALCHEMY_URL=postgresql://ckan:ckan@ckan-db:5432/ckan
       - CKAN_SOLR_URL=http://ckan-solr:8983/solr/ckan
@@ -36,6 +36,7 @@ services:
       - CKAN_SITE_URL=http://localhost
       - CKAN_RECAPTCHA_PUBLICKEY=${CKAN_RECAPTCHA_PUBLICKEY}
       - CKAN_RECAPTCHA_PRIVATEKEY=${CKAN_RECAPTCHA_PRIVATEKEY}
+      - REDIS_HOSTNAME=ckan-redis
       #- DEBUG=true
     volumes:
       - ./ckan-uploads:/var/lib/ckan
