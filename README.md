@@ -5,7 +5,7 @@ CKAN customized for OPAL project.
 
 1. Create necessary folders for CKAN volume
 ```
-$ mkdir -p ckan-uploads/storage
+$ mkdir -p ckan-uploads/storage/uploads/group
 ```
 
 2. Create .env file in the repo root with the following contents:
