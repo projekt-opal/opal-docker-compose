@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 
 services:
   ckan-db:
@@ -27,19 +27,23 @@ services:
   #  restart: always
 
   ckan:
-    image: earthquakesan/ckan:2.8.1-opal
+    image: mwauer/ckan:2.8.1-opal
     environment:
       - CKAN_SQLALCHEMY_URL=postgresql://ckan:ckan@ckan-db:5432/ckan
       - CKAN_SOLR_URL=http://ckan-solr:8983/solr/ckan
       - CKAN_REDIS_URL=redis://ckan-redis:6379/0
       - CKAN_DATAPUSHER_URL=http://ckan-datapusher:8800/
       - CKAN_SITE_URL=http://localhost
+      - CKAN_SITE_TITLE=OPAL CKAN
+      - CKAN_SITE_DESCRIPTION=CKAN-Portal des Forschungsprojekts OPAL
       - CKAN_RECAPTCHA_PUBLICKEY=${CKAN_RECAPTCHA_PUBLICKEY}
       - CKAN_RECAPTCHA_PRIVATEKEY=${CKAN_RECAPTCHA_PRIVATEKEY}
       - REDIS_HOSTNAME=ckan-redis
       #- DEBUG=true
     volumes:
-      - ./ckan-uploads:/var/lib/ckan
+      - ./ckan-storage:/var/lib/ckan
+#      - ./ckan-config:/etc/ckan
+#      - ./ckan-home:/usr/lib/ckan
     restart: always
     ports:
       - 80:5000
