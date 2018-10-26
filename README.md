@@ -9,6 +9,9 @@ $ cat .env
 CKAN_RECAPTCHA_PUBLICKEY=6Le...AIB
 CKAN_RECAPTCHA_PRIVATEKEY=6Le...Gli
 ```
+
+You can get a recaptcha key at https://www.google.com/recaptcha - make sure to select recaptcha v2 / "invisible" as an option. No need to specify a host if you run it at localhost.
+
 2. Make sure that the ckan-storage directory has write permissions by all users. This can be enforced with:
 ```
 $ chmod 777 ckan-storage
