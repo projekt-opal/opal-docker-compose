@@ -22,8 +22,4 @@ $ chmod 777 ckan-storage
 docker-compose up -d
 ```
 
-4. Create admin user
-Run ```create-admin-user.sh`, which invokes the following command:
-```
-docker exec -it $(docker ps | grep ckan:2.8.1-opal | cut -d' ' -f 1) ckan-paster --plugin=ckan sysadmin add admin email=admin@example.com -c /etc/ckan/production.ini
-```
+4. Create ckan admin user and also harvesting DB, and Mesasge brokers by running afterRun.sh

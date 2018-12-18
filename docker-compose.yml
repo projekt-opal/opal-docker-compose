@@ -33,7 +33,7 @@ services:
       - CKAN_SOLR_URL=http://ckan-solr:8983/solr/ckan
       - CKAN_REDIS_URL=redis://ckan-redis:6379/0
       - CKAN_DATAPUSHER_URL=http://ckan-datapusher:8800/
-      - CKAN_SITE_URL=http://localhost
+      - CKAN_SITE_URL=http://localhost:5000
       - CKAN_SITE_TITLE=OPAL CKAN
       - CKAN_SITE_DESCRIPTION=CKAN-Portal des Forschungsprojekts OPAL
       - CKAN_RECAPTCHA_PUBLICKEY=${CKAN_RECAPTCHA_PUBLICKEY}
@@ -46,4 +46,38 @@ services:
 #      - ./ckan-home:/usr/lib/ckan
     restart: always
     ports:
-      - 80:5000
+      - 5000:5000
+  fileStorage:
+    image: busybox
+    volumes:
+      - /files
+  fileServer:
+    image: mnafshin/simple_file_server
+    volumes_from:
+      - fileStorage:ro
+    restart: always
+    ports:
+      - "8000"
+  rdfGraphStorage:
+    image: busybox
+    volumes:
+      - /RdfGraphs
+  civetTripleStore:
+    image: mnafshin/virtuoso
+    container_name: civetTripleStoreContainer
+    volumes_from:
+      - rdfGraphStorage:ro
+    ports:
+      - "8890:8890"
+      - "1111"
+  convertionTool:
+    image: mnafshin/convertion-tool
+    environment:
+      - CRAWLER_TRIPLESTORE_URL=${CRAWLER_TRIPLESTORE_URL}
+      - CRAWLER_TRIPLESTORE_USERNAME=${CRAWLER_TRIPLESTORE_USERNAME}
+      - CRAWLER_TRIPLESTORE_PASSWORD=${CRAWLER_TRIPLESTORE_PASSWORD}
+      - OUTPUT_FOLDER_PATH=/RdfGraphs
+    volumes_from:
+      - rdfGraphStorage:rw
+    ports:
+      - "8080:8080"
