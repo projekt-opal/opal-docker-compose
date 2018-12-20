@@ -58,26 +58,37 @@ services:
     restart: always
     ports:
       - "8000"
-  rdfGraphStorage:
+  fuseki-data:
     image: busybox
     volumes:
-      - /RdfGraphs
+      - /fuseki
   civetTripleStore:
-    image: mnafshin/virtuoso
-    container_name: civetTripleStoreContainer
+    image: stain/jena-fuseki
     volumes_from:
-      - rdfGraphStorage:ro
+      - fuseki-data:rw
     ports:
-      - "8890:8890"
-      - "1111"
+      - "3030:3030"
+    environment:
+      - ADMIN_PASSWORD=admin
+      - JVM_ARGS=-Xmx8g 
   convertionTool:
     image: mnafshin/convertion-tool
     environment:
       - CRAWLER_TRIPLESTORE_URL=${CRAWLER_TRIPLESTORE_URL}
       - CRAWLER_TRIPLESTORE_USERNAME=${CRAWLER_TRIPLESTORE_USERNAME}
       - CRAWLER_TRIPLESTORE_PASSWORD=${CRAWLER_TRIPLESTORE_PASSWORD}
-      - OUTPUT_FOLDER_PATH=/RdfGraphs
-    volumes_from:
-      - rdfGraphStorage:rw
+      - CIVET_TRIPLESTORE_URL=civetTripleStore
     ports:
       - "8080:8080"
+  tripleStoreDumper:
+    image: mnafshin/triple-store-dumper
+    volumes_from:
+      - fileStorage:rw
+    environment:
+      - TRIPLESTORE_URL=civetTripleStore
+      - TRIPLESTORE_USERNAME=admin
+      - TRIPLESTORE_PASSWORD=admin
+      - INTERNAL_FILESERVER_ADDRESS=fileServer
+      - OUTPUT_FOLDER_PATH=/files
+    ports:
+      - "8081:8081"     
