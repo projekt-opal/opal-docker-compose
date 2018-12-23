@@ -57,7 +57,7 @@ services:
       - fileStorage:ro
     restart: always
     ports:
-      - "8000"
+      - "8000:8000"
   fuseki-data:
     image: busybox
     volumes:
@@ -70,7 +70,7 @@ services:
       - "3030:3030"
     environment:
       - ADMIN_PASSWORD=admin
-      - JVM_ARGS=-Xmx8g 
+      - JVM_ARGS=-Xmx15g 
   convertionTool:
     image: mnafshin/convertion-tool
     environment:
@@ -85,7 +85,7 @@ services:
     volumes_from:
       - fileStorage:rw
     environment:
-      - TRIPLESTORE_URL=civetTripleStore
+      - CIVET_TRIPLESTORE_URL=civetTripleStore
       - TRIPLESTORE_USERNAME=admin
       - TRIPLESTORE_PASSWORD=admin
       - INTERNAL_FILESERVER_ADDRESS=fileServer
