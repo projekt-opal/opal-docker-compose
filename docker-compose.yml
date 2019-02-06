@@ -90,5 +90,6 @@ services:
       - TRIPLESTORE_PASSWORD=admin
       - INTERNAL_FILESERVER_ADDRESS=fileServer
       - OUTPUT_FOLDER_PATH=/files
+      - DUMPER_PAGINATION=false
     ports:
       - "8081:8081"     
