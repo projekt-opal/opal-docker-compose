@@ -33,7 +33,7 @@ services:
       - CKAN_SOLR_URL=http://ckan-solr:8983/solr/ckan
       - CKAN_REDIS_URL=redis://ckan-redis:6379/0
       - CKAN_DATAPUSHER_URL=http://ckan-datapusher:8800/
-      - CKAN_SITE_URL=http://localhost
+      - CKAN_SITE_URL=http://localhost:5000
       - CKAN_SITE_TITLE=OPAL CKAN
       - CKAN_SITE_DESCRIPTION=CKAN-Portal des Forschungsprojekts OPAL
       - CKAN_RECAPTCHA_PUBLICKEY=${CKAN_RECAPTCHA_PUBLICKEY}
@@ -46,4 +46,49 @@ services:
 #      - ./ckan-home:/usr/lib/ckan
     restart: always
     ports:
-      - 80:5000
+      - 5000:5000
+  fileStorage:
+    image: busybox
+    volumes:
+      - /files
+  fileServer:
+    image: mnafshin/simple_file_server
+    volumes_from:
+      - fileStorage:ro
+    restart: always
+    ports:
+      - "8000:8000"
+  fuseki-data:
+    image: busybox
+    volumes:
+      - /fuseki
+  civetTripleStore:
+    image: stain/jena-fuseki
+    volumes_from:
+      - fuseki-data:rw
+    ports:
+      - "3030:3030"
+    environment:
+      - ADMIN_PASSWORD=admin
+      - JVM_ARGS=-Xmx15g 
+  convertionTool:
+    image: mnafshin/convertion-tool
+    environment:
+      - CRAWLER_TRIPLESTORE_URL=${CRAWLER_TRIPLESTORE_URL}
+      - CRAWLER_TRIPLESTORE_USERNAME=${CRAWLER_TRIPLESTORE_USERNAME}
+      - CRAWLER_TRIPLESTORE_PASSWORD=${CRAWLER_TRIPLESTORE_PASSWORD}
+      - CIVET_TRIPLESTORE_URL=civetTripleStore
+    ports:
+      - "8080:8080"
+  tripleStoreDumper:
+    image: mnafshin/triple-store-dumper
+    volumes_from:
+      - fileStorage:rw
+    environment:
+      - CIVET_TRIPLESTORE_URL=civetTripleStore
+      - TRIPLESTORE_USERNAME=admin
+      - TRIPLESTORE_PASSWORD=admin
+      - INTERNAL_FILESERVER_ADDRESS=fileServer
+      - OUTPUT_FOLDER_PATH=/files
+    ports:
+      - "8081:8081"     

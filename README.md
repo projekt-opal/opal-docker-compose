@@ -8,9 +8,14 @@ CKAN customized for OPAL project.
 $ cat .env
 CKAN_RECAPTCHA_PUBLICKEY=6Le...AIB
 CKAN_RECAPTCHA_PRIVATEKEY=6Le...Gli
+CRAWLER_TRIPLESTORE_USERNAME=...
+CRAWLER_TRIPLESTORE_PASSWORD=...
+CRAWLER_TRIPLESTORE_URL=...
 ```
 
 You can get a recaptcha key at https://www.google.com/recaptcha - make sure to select recaptcha v2 / "invisible" as an option. No need to specify a host if you run it at localhost.
+
+all variables are listed in env_sample file (You must set appropriate values for them).
 
 2. Make sure that the ckan-storage directory has write permissions by all users. This can be enforced with:
 ```
@@ -22,8 +27,4 @@ $ chmod 777 ckan-storage
 docker-compose up -d
 ```
 
-4. Create admin user
-Run ```create-admin-user.sh`, which invokes the following command:
-```
-docker exec -it $(docker ps | grep ckan:2.8.1-opal | cut -d' ' -f 1) ckan-paster --plugin=ckan sysadmin add admin email=admin@example.com -c /etc/ckan/production.ini
-```
+4. Create ckan admin user, initializing harvesting DB, and setting up Mesasge brokers by running afterRun.sh (Run them one by one (or run the file) after bringing up all services in previous step)
