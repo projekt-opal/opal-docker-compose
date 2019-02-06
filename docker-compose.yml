@@ -71,8 +71,8 @@ services:
     environment:
       - ADMIN_PASSWORD=admin
       - JVM_ARGS=-Xmx15g 
-  convertionTool:
-    image: mnafshin/convertion-tool
+  conversionTool:
+    image: mnafshin/conversion-tool
     environment:
       - CRAWLER_TRIPLESTORE_URL=${CRAWLER_TRIPLESTORE_URL}
       - CRAWLER_TRIPLESTORE_USERNAME=${CRAWLER_TRIPLESTORE_USERNAME}
