@@ -47,49 +47,20 @@ services:
     restart: always
     ports:
       - 5000:5000
-  fileStorage:
-    image: busybox
-    volumes:
-      - /files
-  fileServer:
-    image: mnafshin/simple_file_server
-    volumes_from:
-      - fileStorage:ro
-    restart: always
+  virtuoso:
+    image: mnafshin/virtuoso:latest
     ports:
-      - "8000:8000"
-  fuseki-data:
-    image: busybox
-    volumes:
-      - /fuseki
-  civetTripleStore:
-    image: stain/jena-fuseki
-    volumes_from:
-      - fuseki-data:rw
-    ports:
-      - "3030:3030"
-    environment:
-      - ADMIN_PASSWORD=admin
-      - JVM_ARGS=-Xmx15g 
+      - 8890:8890
+      - 1111
   conversionTool:
     image: mnafshin/conversion-tool
     environment:
       - CRAWLER_TRIPLESTORE_URL=${CRAWLER_TRIPLESTORE_URL}
       - CRAWLER_TRIPLESTORE_USERNAME=${CRAWLER_TRIPLESTORE_USERNAME}
       - CRAWLER_TRIPLESTORE_PASSWORD=${CRAWLER_TRIPLESTORE_PASSWORD}
-      - CIVET_TRIPLESTORE_URL=civetTripleStore
+      - OPAL_TRIPLESTORE_URL=virtuoso
+      - OPAL_TRIPLESTORE_USERNAME=${OPAL_TRIPLESTORE_USERNAME}
+      - OPAL_TRIPLESTORE_PASSWORD=${OPAL_TRIPLESTORE_PASSWORD}
+      - CKAN_URL_ADDRESS=ckan
     ports:
-      - "8080:8080"
-  tripleStoreDumper:
-    image: mnafshin/triple-store-dumper
-    volumes_from:
-      - fileStorage:rw
-    environment:
-      - CIVET_TRIPLESTORE_URL=civetTripleStore
-      - TRIPLESTORE_USERNAME=admin
-      - TRIPLESTORE_PASSWORD=admin
-      - INTERNAL_FILESERVER_ADDRESS=fileServer
-      - OUTPUT_FOLDER_PATH=/files
-      - DUMPER_PAGINATION=false
-    ports:
-      - "8081:8081"     
+      - 8001:8001

@@ -22,7 +22,7 @@ all variables are listed in env_sample file (You must set appropriate values for
 $ chmod 777 ckan-storage
 ```
 
-3. Start-up CKAN
+3. Start-up
 ```
 docker-compose up -d
 ```
